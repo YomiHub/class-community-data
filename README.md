@@ -24,4 +24,23 @@ git checkout hym  //切换到本地分支，默认是在master上
 git branch --set-upstream-to=origin/hym hym  //origin/hym是远程分支，将本地分支与远程分支关联
 git add .
 git commit -m "初始化项目"
+git push
+```
+
+- 分支同步主干代码，并将分支与合并到主干
+
+```
+//分支同步
+(hym) git checkout master
+(master) git pull
+(master) git checkout hym
+(hym) git merge master
+(hym) git commit "解决冲突"
+
+//修改代码后，合并分支到主干之前要先同步分支代码，然后执行以下操作
+(hym) git commit
+(hym) git checkout master
+(master) git merge hym --squash
+(master) git commit ""
+(master) git push origin master
 ```
