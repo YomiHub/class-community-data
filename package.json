@@ -1,0 +1,12 @@
+{
+  "name": "class-community-data",
+  "version": "1.0.0",
+  "description": "班级网站（班级人员管理、资源共享、成员交流）后台接口",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "hym",
+  "license": "ISC"
+}
