@@ -2,7 +2,7 @@
 
 #### 新建项目并初始化
 
-- 新建文件夹 class-community-data，`npm init -y`初始化
+- 新建文件夹 class-community-data，在文件夹下新建入口文件 index.js，然后执行命令`npm init -y`初始化
 - 在项目目录下新建.gitignore 文件，忽视不需要上传 git 的目录和文件，执行`git init -y`
 
 ```
@@ -30,17 +30,28 @@ git push
 - 分支同步主干代码，并将分支与合并到主干
 
 ```
-//分支同步
+#分支同步
 (hym) git checkout master
-(master) git pull
+(master) git pull  #拉取远程代码
 (master) git checkout hym
-(hym) git merge master
-(hym) git commit "解决冲突"
+(hym) git merge master  #将远程主干代码合并到分支
+(hym) git commit -m "解决冲突"
 
-//修改代码后，合并分支到主干之前要先同步分支代码，然后执行以下操作
-(hym) git commit
+#修改代码后，合并分支到主干之前要先同步分支代码，然后执行以下操作
+(hym) git pull  #拉取分支最新代码
 (hym) git checkout master
-(master) git merge hym --squash
-(master) git commit ""
+(master) git merge hym --squash    #将分支代码合并到主干
+(master) git commit -m ""
+(master) git pull origin master --allow-unrelated-histories  #第一次合并提交，合并两个独立启动仓库的历史
 (master) git push origin master
 ```
+
+#### 安装基本使用到的包
+
+- `npm install express body-parser mysqljs/mysql -S`
+- 创建文件夹 public 存放静态资源、models、sevices，以及路由文件 router.js
+
+#### 创建数据库，以及数据表
+
+- 这里使用 navicat 来创建，首先创建 classcommunity 数据库，编码为 utf8_bin
+- 创建数据表，参考链接:https://www.processon.com/view/link/5e820a0de4b0069b2bbd9505
