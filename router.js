@@ -17,6 +17,6 @@ router.all('*', function (req, res, next) {
   next();
 })
 
-router.post('/addUser', user.addUser);
-
+router.post('/register', user.addUser);
+router.post('/login', user.userLogin);
 module.exports = router;

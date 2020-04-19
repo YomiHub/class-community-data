@@ -32,7 +32,7 @@ git push
 ```
 #分支同步
 (hym) git checkout master
-(master) git pull  #拉取远程代码
+(master) git pull origin master --allow-unrelated-histories  #拉取远程代码,第一次合并提交，合并两个独立启动仓库的历史
 (master) git checkout hym
 (hym) git merge master  #将远程主干代码合并到分支
 (hym) git commit -m "解决冲突"
@@ -42,14 +42,16 @@ git push
 (hym) git checkout master
 (master) git merge hym --squash    #将分支代码合并到主干
 (master) git commit -m ""
-(master) git pull origin master --allow-unrelated-histories  #第一次合并提交，合并两个独立启动仓库的历史
-(master) git push origin master
+(master) git pull origin master
+(master) git push origin master   #git push -u origin master  关联并push代码--set-upstream
 ```
 
 #### 安装基本使用到的包
 
-- `npm install express body-parser mysqljs/mysql -S`
+- `npm install express body-parser mysqljs/mysql jsonwebtoken express-jwt -S`
+  + express-jwt内部引用了jsonwebtoken，对其封装使用。 在实际的项目中这两个都需要引用，他们两个的定位不一样。jsonwebtoken是用来生成token给客户端的，express-jwt是用来验证token的
 - 创建文件夹 public 存放静态资源、models、sevices，以及路由文件 router.js
+- 创建utils文件夹，文件connectDB.js用于连接数据库、token.js用于设置、校验token
 
 #### 创建数据库，以及数据表
 
