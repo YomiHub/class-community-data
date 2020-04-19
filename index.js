@@ -35,7 +35,7 @@ app.use(expressJWT({
 //当token失效返回提示信息
 app.use(function(err, req, res, next) {
   if (err.status == 401) {
-    return res.status(401).send('{"tip": "token失效"}');
+    return res.status(401).send('{"code":401,"message": "token失效"}');
   }
 });
 

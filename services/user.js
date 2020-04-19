@@ -14,7 +14,7 @@ exports.addUser = async (req, res) => {
   var data = req.body
   data['avatar_url'] = default_avater
   var result = await user.addUser(data);
-  res.json(result)
+  res.status(200).json(result)
 }
 
 //用户登录
@@ -34,11 +34,11 @@ exports.userLogin = async (req, res) => {
       await verifyToken.setToken(result.data.phone_num, result.data.id).then((token) => {
         result['token'] = token
       })
-      res.json(result)
+      res.status(200).json(result)
     }else{
       res.json(result)
     }
   } catch (e) {
-    console.error(e.message)
+    throw error;
   }
 }
