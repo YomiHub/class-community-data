@@ -50,8 +50,11 @@ git push
 
 - `npm install express body-parser mysqljs/mysql jsonwebtoken express-jwt -S`
   + express-jwt内部引用了jsonwebtoken，对其封装使用。 在实际的项目中这两个都需要引用，他们两个的定位不一样。jsonwebtoken是用来生成token给客户端的，express-jwt是用来验证token的
+  + unless 规则查看 https://github.com/jfromaniello/express-unless
 - 创建文件夹 public 存放静态资源、models、sevices，以及路由文件 router.js
 - 创建utils文件夹，文件connectDB.js用于连接数据库、token.js用于设置、校验token
+- 安装multer，用于上传文件,`npm install multer -S`
+- `npm i express-unless --save`
 
 #### 创建数据库，以及数据表
 

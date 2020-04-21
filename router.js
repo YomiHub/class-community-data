@@ -6,8 +6,9 @@ router.all('*', function (req, res, next) {
   //设置跨域访问
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With"); 
   res.header("Content-Type", "application/json;charset=utf-8");
+  // ("Content-Type","application/x-www-form-urlencoded");
 
   //axios发送post请求时，会先发送options请求，请求通过才会发送post
   if (req.method.toUpperCase() == "OPTIONS") {
@@ -17,6 +18,7 @@ router.all('*', function (req, res, next) {
   next();
 })
 
-router.post('/register', user.addUser);
-router.post('/login', user.userLogin);
+router.post('/api/register', user.addUser);
+router.post('/api/login', user.userLogin);
+router.post('/api/avater/upload', user.avaterUpload);
 module.exports = router;
