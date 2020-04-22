@@ -21,4 +21,8 @@ router.all('*', function (req, res, next) {
 router.post('/api/register', user.addUser);
 router.post('/api/login', user.userLogin);
 router.post('/api/avater/upload', user.avaterUpload);
+router.get('/api/userinfo/relation',user.getRelation);
+router.post('/api/userinfo/update',user.updateInfo);
+router.get('/api/userinfo/getinfo',user.getInfo);
+router.post('/api/userinfo/removeclass',user.removeClass)
 module.exports = router;

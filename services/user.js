@@ -17,8 +17,12 @@ data:{
 exports.addUser = async (req, res) => {
   var data = req.body
   data['avatar_url'] = default_avater
-  var result = await user.addUser(data)
-  res.status(200).json(result)
+  try {
+    var result = await user.addUser(data)
+    res.status(200).json(result)
+  } catch (e) {
+    console.error('[err]', e)
+  }
 }
 
 //用户登录
@@ -45,7 +49,7 @@ exports.userLogin = async (req, res) => {
       res.json(result)
     }
   } catch (e) {
-    throw error
+    console.error('[err]', e)
   }
 }
 
@@ -65,7 +69,7 @@ exports.avaterUpload = (req, res) => {
 
   var file = req.files[0]
   var { user_id } = req.body
-  var img_name =  Date.now() + '-' + file.originalname
+  var img_name = Date.now() + '-' + file.originalname
   //设置上传图片的目录
   var des_file = path.join(__dirname, '../public/useravatar/' + img_name)
   // res.end(JSON.stringify(req.files)+JSON.stringify(req.body)); 测试
@@ -77,18 +81,97 @@ exports.avaterUpload = (req, res) => {
         var imgurl = defaultStatic + '/useravatar/' + img_name
         user
           .addAvater({ id: user_id, avatar_url: imgurl })
-          .then(
-            (result) => {
-              res.status(200).json(result)
-            }
-            // (error) => {
-            //   console.log(error)
-            // }
-          )
+          .then((result) => {
+            res.status(200).json(result)
+          })
           .catch(function (err) {
-            runtimeLog.error('[err]',err)
+            console.error('[err]', err)
           })
       }
     })
   })
+}
+
+//查询用户创建、加入的组织
+/* 
+data:{
+  id
+} 
+*/
+exports.getRelation = async (req, res) => {
+  var user_id = req.query.id
+  var create = await user.getCreate(user_id)
+  var join = await user.getJoin(user_id)
+  var result = {
+    ifCreate: false,
+    create_calss: '',
+    create_calssname: '',
+    ifJoin: false,
+    join_calss: '',
+    join_calssname: '',
+    join_power: 1,
+  }
+  if (create.data && create.data.length != 0) {
+    result['ifCreate'] = true
+    result['create_calss'] = create.data[0].id
+    result['create_calssname'] = create.data[0].name
+  }
+  if (join.data && join.data.length != 0) {
+    result['ifJoin'] = true
+    result['create_calss'] = create.data[0].class_id
+    result['create_calssname'] = create.data[0].name
+    result['join_power'] = create.data[0].power
+  }
+  res.status(200).json({ status: 0, code: 200, data: result })
+}
+
+exports.updateInfo = async (req, res) => {
+  var data = req.body
+  try {
+    var result = await user.updateInfo(data)
+    res.status(200).json(result)
+  } catch (e) {
+    console.error('[err]', e)
+  }
+}
+
+exports.getInfo = (req, res) => {
+  user
+    .getInfo(req.query.id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.removeClass = (req, res) => {
+  var data = req.body
+  user
+    .verifyInfo(data)
+    .then((result) => {
+      if (result.status === 0) {
+        user.removeClass(data).then((nextResult) => {
+          if (nextResult.status === 0) {
+            res
+              .status(200)
+              .json({ status: 0, code: result.code, data:[] })
+          } else {
+            res.status(200).json({
+              status: 1,
+              code: nextResult.code,
+              message: nextResult.message,
+            })
+          }
+        })
+      } else {
+        res
+          .status(200)
+          .json({ status: 1, code: result.code, message: result.message })
+      }
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
 }

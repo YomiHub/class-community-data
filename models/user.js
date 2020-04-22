@@ -52,17 +52,127 @@ exports.userLogin = (queryData) => {
   })
 }
 
-
 //更新头像
 exports.addAvater = (upload) => {
   return new Promise((resolve, reject) => {
     let sql = 'update user set avatar_url=? where id=?'
-    let data = [upload.avatar_url,upload.id]
+    let data = [upload.avatar_url, upload.id]
     db.base(sql, data, (results) => {
       if (results.affectedRows == 1) {
         resolve({ status: 0, code: 200, data: upload })
       } else {
         resolve({ status: 1, code: 500, message: '数据库更新失败' })
+      }
+    })
+  })
+}
+
+//获取加入、创建的组织
+exports.getCreate = (user_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [user_id]
+    let sql = 'select id,name from organization where user_id = ?'
+    db.base(sql, data, (results) => {
+      if (results.length != 0) {
+        resolve({ status: 0, code: 200, data: results })
+      } else {
+        resolve({ status: 0, code: 200, data: [] })
+      }
+    })
+  })
+}
+
+exports.getJoin = (user_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [user_id]
+    let sql =
+      'select focus_relation.class_id,organization.name,focus_relation.power from focus_relation,organization where focus_relation.class_id=organization.id and focus_relation.user_id=? and (focus_relation.power=1 or focus_relation.power=2)'
+    db.base(sql, data, (results) => {
+      if (results.length != 0) {
+        resolve({ status: 0, code: 200, data: results })
+      } else {
+        resolve({ status: 0, code: 200, data: [] })
+      }
+    })
+  })
+}
+
+//设置个人实名信息
+exports.updateInfo = (info) => {
+  return new Promise((resolve, reject) => {
+    let data = [info.user_name, info.user_num, info.user_phone, info.id]
+    let sql = 'update user set user_name=?,user_num=?,user_phone=? where id=?'
+    db.base(sql, data, (results) => {
+      if (results.affectedRows == 1) {
+        resolve({ status: 0, code: 200, data: [] })
+      } else {
+        resolve({ status: 1, code: 500, message: '更新失败' })
+      }
+    })
+  })
+}
+
+//查询个人实名信息
+exports.getInfo = (id) => {
+  return new Promise((resolve, reject) => {
+    let data = [id]
+    let sql = 'select user_name,user_num,user_phone from user where id=?'
+    db.base(sql, data, (results) => {
+      if (results.length != 0) {
+        resolve({ status: 0, code: 200, data: results[0] })
+      } else {
+        resolve({ status: 1, code: 400, message: '查询信息有误' })
+      }
+    })
+  })
+}
+
+// 验证用户ID是否与密码匹配
+exports.verifyInfo = (queryData) => {
+  return new Promise((resolve, reject) => {
+    let sql = 'select * from user where id=?'
+    let data = [queryData['id']]
+    let loginPass = CryptoJS.AES.decrypt(
+      queryData['user_pass'],
+      Secret
+    ).toString(CryptoJS.enc.Utf8)
+    db.base(sql, data, (results) => {
+      if (results.length != 0) {
+        let realPass = CryptoJS.AES.decrypt(
+          results[0]['user_pass'],
+          Secret
+        ).toString(CryptoJS.enc.Utf8)
+        if (loginPass === realPass) {
+          resolve({ status: 0, code: 200, data:[] })
+        } else {
+          resolve({ status: 1, code: 400, message: '密码错误' })
+        }
+      } else {
+        resolve({ status: 1, code: 400, message: '账号错误' })
+      }
+    })
+  })
+}
+
+//转让班级
+exports.removeClass = (queryData) => {
+  return new Promise((resolve, reject) => {
+    let sql = 'select * from user where id=?'
+    let data = [queryData['other_id']]
+    db.base(sql, data, (results) => {
+      if (results.length != 0) {
+        let nextsql = 'update organization set user_id=? where user_id=?'
+        let nextdata = [queryData['other_id'], queryData['id']]
+        db.base(nextsql, nextdata, (nextresults) => {
+          console.log(nextresults)
+          if (nextresults.affectedRows == 1) {
+            resolve({ status: 0, code: 200, message: '转让成功' })
+          } else {
+            resolve({ status: 1, code: 500, message: '数据库更新失败' })
+          }
+        })
+      } else {
+        resolve({ status: 1, code: 400, message: '账号错误' })
       }
     })
   })

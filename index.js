@@ -22,7 +22,7 @@ app.use(multerObj.any())
 
 // 解析token获取用户信息
 app.use(function (req, res, next) {
-  console.log(token)
+  //console.log(token)
   var token = req.headers['Authorization']
   if (token == undefined) {
     return next()

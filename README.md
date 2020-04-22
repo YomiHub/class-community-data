@@ -60,3 +60,10 @@ git push
 
 - 这里使用 navicat 来创建，首先创建 classcommunity 数据库，编码为 utf8_bin
 - 创建数据表，参考链接:https://www.processon.com/view/link/5e820a0de4b0069b2bbd9505
+
+#### 创建触发器
+- 对于organization表：执行insert时，触发：insert 记录到focus中，默认创建者关注班级，且权限最高位3，即管理者
+- 对于organization表：执行update时，触发：删除原本创建者的记录，同时追加新创建者的记录（user_id以及权限值为3则为创建者）
+
+#### 数据库字段描述
+- 对于focus表：power值为0、1、2、3，分别表示关注者、加入者、管理者、创建者

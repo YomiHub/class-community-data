@@ -9,11 +9,9 @@ exports.base = (sql, data, callBack) => {
   });
 
   connection.connect();
-
   connection.query(sql, data, (error, results, fileds) => {
     if (error) throw error;
     callBack(results);
   });
-
   connection.end();
 }
