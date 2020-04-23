@@ -104,22 +104,22 @@ exports.getRelation = async (req, res) => {
   var join = await user.getJoin(user_id)
   var result = {
     ifCreate: false,
-    create_calss: '',
-    create_calssname: '',
+    create_class: '',
+    create_classname: '',
     ifJoin: false,
-    join_calss: '',
-    join_calssname: '',
+    join_class: '',
+    join_classname: '',
     join_power: 1,
   }
   if (create.data && create.data.length != 0) {
     result['ifCreate'] = true
-    result['create_calss'] = create.data[0].id
-    result['create_calssname'] = create.data[0].name
+    result['create_class'] = create.data[0].id
+    result['create_classname'] = create.data[0].name
   }
   if (join.data && join.data.length != 0) {
     result['ifJoin'] = true
-    result['create_calss'] = create.data[0].class_id
-    result['create_calssname'] = create.data[0].name
+    result['create_class'] = join.data[0].class_id
+    result['create_classname'] = join.data[0].name
     result['join_power'] = create.data[0].power
   }
   res.status(200).json({ status: 0, code: 200, data: result })

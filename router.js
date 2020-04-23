@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const user = require('./services/user.js');
+const feature = require('./services/feature.js');
 
 router.all('*', function (req, res, next) {
   //设置跨域访问
@@ -25,4 +26,7 @@ router.get('/api/userinfo/relation',user.getRelation);
 router.post('/api/userinfo/update',user.updateInfo);
 router.get('/api/userinfo/getinfo',user.getInfo);
 router.post('/api/userinfo/removeclass',user.removeClass)
+
+router.get('/api/feature/getlist',feature.getList)
+router.get('/api/feature/gethotlist',feature.getHotList)
 module.exports = router;
