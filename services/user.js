@@ -118,9 +118,9 @@ exports.getRelation = async (req, res) => {
   }
   if (join.data && join.data.length != 0) {
     result['ifJoin'] = true
-    result['create_class'] = join.data[0].class_id
-    result['create_classname'] = join.data[0].name
-    result['join_power'] = create.data[0].power
+    result['join_class'] = join.data[0].class_id
+    result['join_classname'] = join.data[0].name
+    result['join_power'] = join.data[0].power
   }
   res.status(200).json({ status: 0, code: 200, data: result })
 }
