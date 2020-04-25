@@ -37,5 +37,10 @@ router.post('/api/feature/upload',feature.upload)
 router.post('/api/class/joinclass',organize.joinClass)
 router.post('/api/class/logoupload',organize.logoUpload)
 router.post('/api/class/createclass',organize.createClass)
+router.get('/api/class/getalbum',organize.getAlbum)
+router.post('/api/class/createalbum',organize.createAlbum)
+router.post('/api/class/photoupload',organize.photoupload)
+router.get('/api/class/getphoto',organize.getPhoto)
+router.delete('/api/class/delphoto',organize.delPhoto)
 
 module.exports = router;

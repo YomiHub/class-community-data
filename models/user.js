@@ -177,3 +177,18 @@ exports.removeClass = (queryData) => {
     })
   })
 }
+
+//查询管理权限
+exports.getPower = (class_id,user_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [class_id,user_id]
+    let sql = 'select * from focus_relation where class_id=? and user_id=? and (power=2 or power=3)'
+    db.base(sql, data, (results) => {
+      if (results.length != 0) {
+        resolve({ status: 0, code: 200, data: {hasPower:true,power:results[0].power} })
+      } else {
+        resolve({ status: 1, code: 400, message: '没有管理权限' })
+      }
+    })
+  })
+}
