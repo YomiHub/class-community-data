@@ -82,7 +82,157 @@ exports.upload = (req, res) => {
   feature
     .upload(data)
     .then((result) => {
-      res.status(200).json({ status: 1, code: 200, data:result })
+      res.status(200).json({ status: 1, code: 200, data: result })
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.getDetail = (req, res) => {
+  feature
+    .getDetail(req.query.user_id,req.query.feature_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.getComment = async (req, res) => {
+  try {
+    var result = await feature.getComment(
+      req.query.feature_id,
+      req.query.pageindex,
+      req.query.pagesize
+    )
+    if (result.data && result.data.length !== 0) {
+      for (let i = 0; i < result.data.length; i++) {
+        var results = await feature.getReplyComment(result.data[i]['id'])
+        result.data[i]['reply'] = results.data
+      }
+      res.status(200).json(result)
+    } else {
+      res.status(200).json(result)
+    }
+  } catch (error) {
+    res.status(500).json({ status: 1, code: 500, message: '服务器错误' })
+    console.log(error)
+  }
+}
+
+exports.sendComment = (req, res) => {
+  var data = req.body
+  data['comment_likes'] = 0;
+  feature
+    .sendComment(data)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+
+exports.sendCommentReply = (req, res) => {
+  var data = req.body
+  data['reply_likes'] = 0;
+  feature
+    .sendCommentReply(data)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.addFeatureLike = (req,res)=>{
+  feature
+    .addFeatureLike(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.addCollect = (req,res)=>{
+  feature
+    .addCollect(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.deleteFeature = (req,res)=>{
+  feature
+    .deleteFeature(req.query.user_id,req.query.feature_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.deleteComment= (req,res)=>{
+  feature
+    .deleteComment(req.query.user_id,req.query.comment_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.supportComment = (req,res)=>{
+  feature
+    .supportComment(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.supportReply = (req,res)=>{
+  feature
+    .supportReply(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.addFocus = (req,res)=>{
+  var data = req.body;
+  data['power'] = 0;
+  feature
+    .addFocus(data)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.removeFocus= (req,res)=>{
+  feature
+    .removeFocus(req.query.user_id,req.query.class_id)
+    .then((result) => {
+      res.status(200).json(result)
     })
     .catch(function (err) {
       console.error('[err]', err)
