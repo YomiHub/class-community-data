@@ -133,29 +133,31 @@ exports.getAlbum = (req, res) => {
 */
 exports.createAlbum = (req, res) => {
   organize
-  .createAlbum(req.body).then((result) => {
-    res.status(200).json(result)
-  })
-  .catch(function (err) {
-    console.error('[err]', err)
-  })
+    .createAlbum(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
 }
 
 exports.getPhoto = (req, res) => {
   organize
-  .getPhoto(req.query.album_id).then((result) => {
-    res.status(200).json(result)
-  })
-  .catch(function (err) {
-    console.error('[err]', err)
-  })
+    .getPhoto(req.query.album_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
 }
 
 exports.photoupload = (req, res) => {
   var file = req.files[0]
-  var album_id = req.body.album_id;
-  if(!file||album_id.length===0){
-    res.status(400).json({ status: 1, code: 5400, message: '请求信息有误' })
+  var album_id = req.body.album_id
+  if (!file || album_id.length === 0) {
+    res.status(400).json({ status: 1, code: 400, message: '请求信息有误' })
   }
   var img_name = Date.now() + '-' + file.originalname
   //设置上传图片的目录
@@ -168,7 +170,7 @@ exports.photoupload = (req, res) => {
       } else {
         var imgurl = defaultStatic + '/classphotos/' + img_name
         organize
-          .addPhoto({ album_id:album_id,photo_url: imgurl })
+          .addPhoto({ album_id: album_id, photo_url: imgurl })
           .then((result) => {
             res.status(200).json(result)
           })
@@ -182,10 +184,104 @@ exports.photoupload = (req, res) => {
 
 exports.delPhoto = (req, res) => {
   organize
-  .delPhoto(req.query.photo_id).then((result) => {
-    res.status(200).json(result)
+    .delPhoto(req.query.photo_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.getRecentNotice = (req, res) => {
+  organize
+    .getRecentNotice(req.query.user_id, req.query.class_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.getNoticeList = (req, res) => {
+  organize
+    .getNoticeList(
+      req.query.user_id,
+      req.query.class_id,
+      req.query.pageindex,
+      req.query.pagesize
+    )
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.uploadNoticeFile = (req, res) => {
+  var file = req.files[0]
+  if (!file) {
+    res.status(200).json({ status: 0, code: 200, data: { url: null } })
+  }
+  var file_name = Date.now() + '-' + file.originalname
+  //设置上传图片的目录
+  var des_file = path.join(__dirname, '../public/noticefile/' + file_name)
+  //res.end(JSON.stringify(req.files)+JSON.stringify(req.body)); //测试
+  fs.readFile(file.path, function (err, data) {
+    fs.writeFile(des_file, data, function (err) {
+      if (err) {
+        res.status(200).json({ status: 1, code: 500, message: '上传失败' })
+      } else {
+        var imgurl = defaultStatic + '/noticefile/' + file_name
+        res.status(200).json({ status: 0, code: 200, data: { url: imgurl } })
+      }
+    })
   })
-  .catch(function (err) {
-    console.error('[err]', err)
+}
+
+exports.uploadNotice = (req, res) => {
+  var data = req.body
+  organize.getclassMember(data.class_id).then((preResult) => {
+    if (preResult.status === 0) {
+      var unreadArr = [];
+      preResult.data.forEach(item => {
+        unreadArr.push(item.user_name)
+      });
+      data['unread'] = unreadArr.join(' ')
+      organize
+        .uploadNotice(data)
+        .then((result) => {
+          res.status(200).json(result)
+        })
+        .catch(function (err) {
+          console.error('[err]', err)
+        })
+    } else {
+      res.status(200).json({ status: 1, code: 500, message: '网络请求错误' })
+    }
   })
+}
+
+exports.deleteNotice = (req, res) => {
+  organize
+    .deleteNotice(req.query.notice_id,req.query.user_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.readNotice= (req,res)=>{
+  organize
+    .readNotice(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
 }

@@ -53,5 +53,11 @@ router.post('/api/class/createalbum',organize.createAlbum)
 router.post('/api/class/photoupload',organize.photoupload)
 router.get('/api/class/getphoto',organize.getPhoto)
 router.delete('/api/class/delphoto',organize.delPhoto)
+router.get('/api/class/getrecentnotice',organize.getRecentNotice)
+router.get('/api/class/getnoticelist',organize.getNoticeList)
+router.post('/api/class/noticefile',organize.uploadNoticeFile)
+router.post('/api/class/noticeupload',organize.uploadNotice)
+router.delete('/api/class/delnotice',organize.deleteNotice)
+router.put('/api/class/readnotice',organize.readNotice)
 
 module.exports = router;
