@@ -285,3 +285,75 @@ exports.readNotice= (req,res)=>{
       console.error('[err]', err)
     })
 }
+
+exports.getLeaveList = (req, res) => {
+  organize
+    .getLeaveList(
+      req.query.class_id,
+      req.query.pageindex,
+      req.query.pagesize
+    )
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.getClassInfo = (req, res) => {
+  organize
+    .getClassInfo(req.query.class_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+
+exports.uploadleaveFile = (req, res) => {
+  var file = req.files[0]
+  if (!file) {
+    res.status(200).json({ status: 0, code: 200, data: { url: null } })
+  }
+  var file_name = Date.now() + '-' + file.originalname
+  //设置上传图片的目录
+  var des_file = path.join(__dirname, '../public/leavefile/' + file_name)
+  //res.end(JSON.stringify(req.files)+JSON.stringify(req.body)); //测试
+  fs.readFile(file.path, function (err, data) {
+    fs.writeFile(des_file, data, function (err) {
+      if (err) {
+        res.status(200).json({ status: 1, code: 500, message: '上传失败' })
+      } else {
+        var imgurl = defaultStatic + '/leavefile/' + file_name
+        res.status(200).json({ status: 0, code: 200, data: { url: imgurl } })
+      }
+    })
+  })
+}
+
+exports.uploadleave = (req, res) => {
+  var data = req.body
+  organize
+    .uploadleave(data)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+
+}
+
+exports.deleteLeave= (req, res) => {
+  organize
+    .deleteLeave(req.query.leave_id,req.query.user_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}

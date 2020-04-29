@@ -191,3 +191,64 @@ exports.readNotice = (data) => {
     })
   })
 }
+
+exports.getLeaveList = (class_id, pageindex, pagesize) => {
+  pageindex = parseInt(pageindex) || 1
+  pagesize = parseInt(pagesize) || 2
+  return new Promise((resolve, reject) => {
+    let countSql = 'select count(*) as total from leave_word where class_id=?'
+    let sql = 'select user.user_name,user.avatar_url,leave_word.id,leave_word.user_id,leave_word.class_id,leave_word.content,leave_word.leave_file,leave_word.leave_time from leave_word,user where leave_word.user_id=user.id and leave_word.class_id=? order by leave_word.id desc limit ?,?'
+    db.base(sql, [class_id,(pageindex - 1) * pagesize, pagesize], (results) => {
+      db.base(countSql, [class_id], (result) => {
+        resolve({
+          status: 0,
+          code: 200,
+          total: result[0].total,
+          data: results,
+        })
+      })
+    })
+  })
+}
+
+exports.getClassInfo = (class_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [class_id]
+    let sql = 'select logo_url,name,id from organization where id=?'
+    db.base(sql, data, (results) => {
+      resolve({ status: 0, code: 200, data: results[0] })
+    })
+  })
+}
+
+exports.uploadleave = (data) => {
+  return new Promise((resolve, reject) => {
+    let sql = 'insert into leave_word set ?'
+    db.base(sql, data, (results) => {
+      if (results.affectedRows == 1) {
+        let aftersql =
+          'select user.user_name,user.avatar_url,leave_word.id,leave_word.user_id,leave_word.class_id,leave_word.content,leave_word.leave_file,leave_word.leave_time from leave_word,user where leave_word.user_id=user.id and leave_word.class_id=? and leave_word.user_id=? order by id desc limit 1'
+        let afterdata = [data.class_id,data.user_id]
+        db.base(aftersql, afterdata, (result) => {
+          resolve({ status: 0, code: 200, data: result[0] })
+        })
+      } else {
+        resolve({ status: 1, code: 500, message: '插入失败' })
+      }
+    })
+  })
+}
+
+exports.deleteLeave = (leave_id,user_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [leave_id,user_id]
+    let sql = 'delete from leave_word where id=? and user_id=?'
+    db.base(sql, data, (results) => {
+      if (results.affectedRows == 1) {
+        resolve({ status: 0, code: 200, data: [] })
+      } else {
+        resolve({ status: 1, code: 500, message: '删除失败' })
+      }
+    })
+  })
+}

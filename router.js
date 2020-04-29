@@ -59,5 +59,11 @@ router.post('/api/class/noticefile',organize.uploadNoticeFile)
 router.post('/api/class/noticeupload',organize.uploadNotice)
 router.delete('/api/class/delnotice',organize.deleteNotice)
 router.put('/api/class/readnotice',organize.readNotice)
+router.get('/api/class/getleavelist',organize.getLeaveList )
+router.get('/api/class/getclassinfo',organize.getClassInfo )
+router.post('/api/class/leavefile',organize.uploadleaveFile)
+router.post('/api/class/leaveupload',organize.uploadleave)
+router.delete('/api/class/delleave',organize.deleteLeave)
+
 
 module.exports = router;
