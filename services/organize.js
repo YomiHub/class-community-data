@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const multer = require('multer') //安装上传图片模块,multer会将文件的信息写到 req.file 上，如下代码所示。
+const xlsx = require('node-xlsx')
 const organize = require('../models/organize.js')
 const user = require('../models/user.js')
 const defaultStatic = 'http://localhost:3000/www'
@@ -245,10 +246,10 @@ exports.uploadNotice = (req, res) => {
   var data = req.body
   organize.getclassMember(data.class_id).then((preResult) => {
     if (preResult.status === 0) {
-      var unreadArr = [];
-      preResult.data.forEach(item => {
+      var unreadArr = []
+      preResult.data.forEach((item) => {
         unreadArr.push(item.user_name)
-      });
+      })
       data['unread'] = unreadArr.join(' ')
       organize
         .uploadNotice(data)
@@ -266,7 +267,7 @@ exports.uploadNotice = (req, res) => {
 
 exports.deleteNotice = (req, res) => {
   organize
-    .deleteNotice(req.query.notice_id,req.query.user_id)
+    .deleteNotice(req.query.notice_id, req.query.user_id)
     .then((result) => {
       res.status(200).json(result)
     })
@@ -275,7 +276,7 @@ exports.deleteNotice = (req, res) => {
     })
 }
 
-exports.readNotice= (req,res)=>{
+exports.readNotice = (req, res) => {
   organize
     .readNotice(req.body)
     .then((result) => {
@@ -288,11 +289,7 @@ exports.readNotice= (req,res)=>{
 
 exports.getLeaveList = (req, res) => {
   organize
-    .getLeaveList(
-      req.query.class_id,
-      req.query.pageindex,
-      req.query.pagesize
-    )
+    .getLeaveList(req.query.class_id, req.query.pageindex, req.query.pagesize)
     .then((result) => {
       res.status(200).json(result)
     })
@@ -311,7 +308,6 @@ exports.getClassInfo = (req, res) => {
       console.error('[err]', err)
     })
 }
-
 
 exports.uploadleaveFile = (req, res) => {
   var file = req.files[0]
@@ -344,12 +340,11 @@ exports.uploadleave = (req, res) => {
     .catch(function (err) {
       console.error('[err]', err)
     })
-
 }
 
-exports.deleteLeave= (req, res) => {
+exports.deleteLeave = (req, res) => {
   organize
-    .deleteLeave(req.query.leave_id,req.query.user_id)
+    .deleteLeave(req.query.leave_id, req.query.user_id)
     .then((result) => {
       res.status(200).json(result)
     })
@@ -357,3 +352,104 @@ exports.deleteLeave= (req, res) => {
       console.error('[err]', err)
     })
 }
+
+exports.getMember = (req, res) => {
+  organize
+    .getMember(req.query.class_id, req.query.user_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.deleteMember = (req, res) => {
+  organize
+    .deleteMember(req.query.class_id, req.query.user_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.getMemberExcel = (req, res) => {
+  organize
+    .getMember(req.query.class_id, req.query.user_id)
+    .then((result) => {
+      const conf = []
+      var colName = ['学号', '姓名', '手机号']
+      conf.push(colName) //第一行为列名
+
+      //创建一个和表头对应且名称与数据库字段对应数据，便于循环取出数据
+      let rows = ['id', 'user_num', 'user_name', 'user_phone']
+      let data = result.data
+      for (let i = 0; i < data.length; i++) {
+        let row = [] //用来装载每次得到的数据
+        //内循环取出每个字段的数据
+        for (let j = 1; j < rows.length; j++) {
+          if (data[i][rows[j]]) {
+            row.push(data[i][rows[j]].toString())
+          } else {
+            row.push('')
+          }
+        }
+        //将每一个{ }中的数据添加到承载中
+        conf.push(row)
+      }
+
+      let buffer = xlsx.build([{ name: result.class_name, data: conf }])
+
+      var file_name = Date.now() + '.xlsx'
+      //设置上传图片的目录
+      var des_file = path.join(__dirname, '../public/memberfile/' + file_name)
+      // 写入文件
+      fs.writeFile(des_file, buffer, { flag: 'w' }, (err) => {
+        if (err) {
+          res.status(200).json({ status: 1, code: 500, message: '下载失败' })
+        } else {
+          var fileurl = defaultStatic + '/memberfile/' + file_name
+          res.status(200).json({ status: 0, code: 200, file_url: fileurl })
+        }
+      })
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.getApplyList = (req, res) => {
+  organize
+    .getApplyList(req.query.class_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.handlePower = (req,res)=>{
+  organize
+    .handlePower(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.removePower = (req,res)=>{
+  organize
+    .removePower(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+

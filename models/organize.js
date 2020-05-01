@@ -10,7 +10,7 @@ exports.joinClass = (data) => {
           class_id: data.class_id,
           identity: data.identity,
           power: 1,
-          power_status: 1,
+          power_status: 0,
         }
         let sql = 'insert into focus_relation set ?'
         db.base(sql, setInfo, (results) => {
@@ -248,6 +248,70 @@ exports.deleteLeave = (leave_id,user_id) => {
         resolve({ status: 0, code: 200, data: [] })
       } else {
         resolve({ status: 1, code: 500, message: '删除失败' })
+      }
+    })
+  })
+}
+
+
+exports.getMember = (class_id,user_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [class_id]
+    let sql = 'select user.id,user.user_num,user.user_name,user.user_phone from user,focus_relation where focus_relation.user_id=user.id and focus_relation.class_id=? and focus_relation.identity=1 and (focus_relation.power=2 or focus_relation.power=1)'
+    db.base(sql, data, (results) => {
+      let aftersql ='select focus_relation.power,organization.name from focus_relation,organization where focus_relation.class_id=? and focus_relation.user_id=? and focus_relation.class_id=organization.id'
+      db.base(aftersql, [class_id,user_id], (res) => {
+        resolve({ status: 0, code: 200, power:res[0].power,class_name:res[0].name,data: results })
+      })
+    })
+  })
+}
+
+exports.deleteMember = (class_id,user_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [class_id,user_id]
+    let sql = 'delete from focus_relation where class_id=? and user_id=? and (power=1 or power=2)'
+    db.base(sql, data, (results) => {
+      if (results.affectedRows > 0) {
+        resolve({ status: 0, code: 200, data: [] })
+      } else {
+        resolve({ status: 1, code: 500, message: '删除失败' })
+      }
+    })
+  })
+}
+
+exports.getApplyList = (class_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [class_id]
+    let sql = 'select user.id as user_id,user.user_name,user.user_num,focus_relation.power,focus_relation.id from user,focus_relation where focus_relation.class_id=? and power_status=1 and focus_relation.user_id=user.id'
+    db.base(sql, data, (results) => {
+      resolve({ status: 0, code: 200, data: results })
+    })
+  })
+}
+
+exports.handlePower= (data) => {
+  return new Promise((resolve, reject) => {
+    let sql = 'update focus_relation set power=2 where user_id=? and class_id=? and power=1 and power_status=1'
+    db.base(sql, [data.user_id,data.class_id], (results) => {
+      if (results.affectedRows == 1) {
+        resolve({ status: 0, code: 200, data: results })
+      } else {
+        resolve({ status: 1, code: 500, message: '授权失败' })
+      }
+    })
+  })
+}
+
+exports.removePower= (data) => {
+  return new Promise((resolve, reject) => {
+    let sql = 'update focus_relation set power_status=0,power=1 where user_id=? and class_id=? and power=2 and power_status=1'
+    db.base(sql, [data.user_id,data.class_id], (results) => {
+      if (results.affectedRows == 1) {
+        resolve({ status: 0, code: 200, data: results })
+      } else {
+        resolve({ status: 1, code: 500, message: '取消授权失败' })
       }
     })
   })

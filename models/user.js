@@ -192,3 +192,28 @@ exports.getPower = (class_id,user_id) => {
     })
   })
 }
+
+
+exports.getApplyStatus = (id,class_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [id,class_id]
+    let sql = 'select power,power_status from focus_relation where user_id=? and class_id=? and power_status=1'
+    db.base(sql, data, (results) => {
+      resolve({ status: 0, code: 200, data: results })
+    })
+  })
+}
+
+
+exports.sendApply = (data) => {
+  return new Promise((resolve, reject) => {
+    let sql = 'update focus_relation set power_status=1 where user_id=? and class_id=? and power=1'
+    db.base(sql, [data.user_id,data.class_id], (results) => {
+      if (results.affectedRows == 1) {
+        resolve({ status: 0, code: 200, data: results })
+      } else {
+        resolve({ status: 1, code: 500, message: '申请授权失败' })
+      }
+    })
+  })
+}

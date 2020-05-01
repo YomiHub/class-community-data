@@ -175,3 +175,26 @@ exports.removeClass = (req, res) => {
       console.error('[err]', err)
     })
 }
+
+
+exports.getApplyStatus= (req, res) => {
+  user
+    .getApplyStatus(req.query.user_id,req.query.class_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.sendApply = (req,res)=>{
+  user
+    .sendApply(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}

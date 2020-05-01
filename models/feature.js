@@ -33,6 +33,7 @@ exports.getList = (type, keyword, classId, pageindex, pagesize) => {
           code: 200,
           message: '没有创建或者加入的班级',
         })
+        return
       }
       sql += ' and feature.class_id=? order by id desc limit ?,?'
       countSql += ' where class_id=' + classId

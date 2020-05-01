@@ -27,6 +27,8 @@ router.get('/api/userinfo/relation',user.getRelation);
 router.post('/api/userinfo/update',user.updateInfo);
 router.get('/api/userinfo/getinfo',user.getInfo);
 router.post('/api/userinfo/removeclass',user.removeClass)
+router.get('/api/userinfo/getapplystatus',user.getApplyStatus);
+router.put('/api/userinfo/sendapply',user.sendApply)
 
 router.get('/api/feature/getlist',feature.getList)
 router.get('/api/feature/gethotlist',feature.getHotList)
@@ -64,6 +66,12 @@ router.get('/api/class/getclassinfo',organize.getClassInfo )
 router.post('/api/class/leavefile',organize.uploadleaveFile)
 router.post('/api/class/leaveupload',organize.uploadleave)
 router.delete('/api/class/delleave',organize.deleteLeave)
+router.get('/api/class/getmember',organize.getMember)
+router.delete('/api/class/delmember',organize.deleteMember)
+router.get('/api/class/getmemberexcel',organize.getMemberExcel)
+router.get('/api/class/getapplylist',organize.getApplyList)
+router.put('/api/class/handlepower',organize.handlePower)
+router.put('/api/class/removepower',organize.removePower)
 
 
 module.exports = router;
