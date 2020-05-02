@@ -290,3 +290,53 @@ exports.removeFocus = (user_id, class_id) => {
     })
   })
 }
+
+
+exports.getClassList= (class_id, pageindex, pagesize) => {
+  return new Promise((resolve, reject) => {
+    let preSql = 'select count(*) as total from feature where feature.class_id=?'
+    db.base(preSql, [class_id], (preResult) => {
+      let sql =
+        'select feature.id,feature.user_id,feature.class_id,feature.title,feature.brief,feature.likes,feature.clicks,feature.cover_img,feature.add_time,organization.logo_url,organization.name,(select count(*) from collect where collect.feature_id = feature.id) AS collect_count from feature,organization where organization.id=feature.class_id and feature.class_id=? order by feature.id desc limit ?,?'
+      pageindex = parseInt(pageindex) || 1
+      pagesize = parseInt(pagesize) || 2
+      db.base(
+        sql,
+        [class_id, (pageindex - 1) * pagesize, pagesize],
+        (results) => {
+          resolve({
+            status: 0,
+            code: 200,
+            total: preResult[0].total,
+            data: results,
+          })
+        }
+      )
+    })
+  })
+}
+
+
+exports.getCollectList= (user_id, pageindex, pagesize) => {
+  return new Promise((resolve, reject) => {
+    let preSql = 'select count(*) as total from collect where user_id=?'
+    db.base(preSql, [user_id], (preResult) => {
+      let sql =
+        'select feature.id,feature.user_id,feature.class_id,feature.title,feature.brief,feature.likes,feature.clicks,feature.cover_img,feature.add_time,organization.logo_url,organization.name,(select count(*) from collect where collect.feature_id = feature.id) AS collect_count from feature,organization,collect where organization.id=feature.class_id and feature.id=collect.feature_id and collect.user_id=? order by collect.id desc limit ?,?'
+      pageindex = parseInt(pageindex) || 1
+      pagesize = parseInt(pagesize) || 2
+      db.base(
+        sql,
+        [user_id, (pageindex - 1) * pagesize, pagesize],
+        (results) => {
+          resolve({
+            status: 0,
+            code: 200,
+            total: preResult[0].total,
+            data: results,
+          })
+        }
+      )
+    })
+  })
+}

@@ -217,3 +217,13 @@ exports.sendApply = (data) => {
     })
   })
 }
+
+exports.getUserFocus= (user_id) => {
+  return new Promise((resolve, reject) => {
+    let data = [user_id]
+    let sql = 'select organization.logo_url,organization.name,organization.support_count,organization.id,(select count(*) from focus_relation where focus_relation.class_id=organization.id and focus_relation.power=0) AS focus_count from organization,focus_relation where focus_relation.user_id=? and power=0'
+    db.base(sql, data, (results) => {
+      resolve({ status: 0, code: 200, data: results })
+    })
+  })
+}

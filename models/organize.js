@@ -211,10 +211,10 @@ exports.getLeaveList = (class_id, pageindex, pagesize) => {
   })
 }
 
-exports.getClassInfo = (class_id) => {
+exports.getClassInfo = (class_id,user_id) => {
   return new Promise((resolve, reject) => {
-    let data = [class_id]
-    let sql = 'select logo_url,name,id from organization where id=?'
+    let data = [class_id,class_id,user_id,class_id]
+    let sql = 'select organization.logo_url,organization.name,organization.brief,organization.support_count,organization.id,(select count(*) from focus_relation where focus_relation.class_id=? and focus_relation.power=0) AS focus_count,(select count(*) from focus_relation where focus_relation.class_id = ? and focus_relation.user_id=? and focus_relation.power=0) AS if_focus from organization where id=?'
     db.base(sql, data, (results) => {
       resolve({ status: 0, code: 200, data: results[0] })
     })
@@ -312,6 +312,19 @@ exports.removePower= (data) => {
         resolve({ status: 0, code: 200, data: results })
       } else {
         resolve({ status: 1, code: 500, message: '取消授权失败' })
+      }
+    })
+  })
+}
+
+exports.classSupport= (data) => {
+  return new Promise((resolve, reject) => {
+    let sql = 'update organization set support_count=support_count+1 where id=?'
+    db.base(sql, [data.class_id], (results) => {
+      if (results.affectedRows == 1) {
+        resolve({ status: 0, code: 200, data: results })
+      } else {
+        resolve({ status: 1, code: 500, message: '点赞失败' })
       }
     })
   })

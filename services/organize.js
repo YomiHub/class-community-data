@@ -300,7 +300,7 @@ exports.getLeaveList = (req, res) => {
 
 exports.getClassInfo = (req, res) => {
   organize
-    .getClassInfo(req.query.class_id)
+    .getClassInfo(req.query.class_id,req.query.user_id)
     .then((result) => {
       res.status(200).json(result)
     })
@@ -445,6 +445,17 @@ exports.handlePower = (req,res)=>{
 exports.removePower = (req,res)=>{
   organize
     .removePower(req.body)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}
+
+exports.classSupport = (req,res)=>{
+  organize
+    .classSupport(req.body)
     .then((result) => {
       res.status(200).json(result)
     })

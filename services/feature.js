@@ -238,3 +238,44 @@ exports.removeFocus= (req,res)=>{
       console.error('[err]', err)
     })
 }
+
+
+exports.getClassList = (req, res) => {
+  feature
+  .getClassList(
+    req.query.class_id,
+    req.query.pageindex,
+    req.query.pagesize
+  )
+  .then(
+    (result) => {
+      res.status(200).json(result)
+    },
+    (error) => {
+      res.status(200).json(error)
+    }
+  )
+  .catch(function (err) {
+    console.error('[err]', err)
+  })
+}
+
+exports.getCollectList = (req, res) => {
+  feature
+  .getCollectList(
+    req.query.user_id,
+    req.query.pageindex,
+    req.query.pagesize
+  )
+  .then(
+    (result) => {
+      res.status(200).json(result)
+    },
+    (error) => {
+      res.status(200).json(error)
+    }
+  )
+  .catch(function (err) {
+    console.error('[err]', err)
+  })
+}

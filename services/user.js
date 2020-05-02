@@ -198,3 +198,14 @@ exports.sendApply = (req,res)=>{
       console.error('[err]', err)
     })
 }
+
+exports.getUserFocus= (req, res) => {
+  user
+    .getUserFocus(req.query.user_id)
+    .then((result) => {
+      res.status(200).json(result)
+    })
+    .catch(function (err) {
+      console.error('[err]', err)
+    })
+}

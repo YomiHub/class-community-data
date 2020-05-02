@@ -29,6 +29,7 @@ router.get('/api/userinfo/getinfo',user.getInfo);
 router.post('/api/userinfo/removeclass',user.removeClass)
 router.get('/api/userinfo/getapplystatus',user.getApplyStatus);
 router.put('/api/userinfo/sendapply',user.sendApply)
+router.get('/api/userinfo/getuserfocus',user.getUserFocus);
 
 router.get('/api/feature/getlist',feature.getList)
 router.get('/api/feature/gethotlist',feature.getHotList)
@@ -46,6 +47,9 @@ router.put('/api/feature/supportcomment',feature.supportComment)
 router.put('/api/feature/supportreply',feature.supportReply)
 router.post('/api/feature/addfocus',feature.addFocus)
 router.delete('/api/feature/removefocus',feature.removeFocus)
+router.get('/api/feature/getclasslist',feature.getClassList)
+router.get('/api/feature/getcollectlist',feature.getCollectList)
+
 
 router.post('/api/class/joinclass',organize.joinClass)
 router.post('/api/class/logoupload',organize.logoUpload)
@@ -72,6 +76,7 @@ router.get('/api/class/getmemberexcel',organize.getMemberExcel)
 router.get('/api/class/getapplylist',organize.getApplyList)
 router.put('/api/class/handlepower',organize.handlePower)
 router.put('/api/class/removepower',organize.removePower)
+router.put('/api/class/classsupport',organize.classSupport)
 
 
 module.exports = router;
