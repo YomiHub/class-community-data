@@ -5,6 +5,8 @@ const expressJWT = require('express-jwt')
 const verifyToken = require('./utils/token.js')
 const multer = require('multer')
 const app = express()
+const server = require('http').Server(app);
+const io =require('socket.io')(server)
 
 const router = require('./router.js')
 app.use('/www', express.static(path.join(__dirname, './public')))
@@ -45,7 +47,7 @@ app.use(
   expressJWT({
     secret: 'mes_qdhd_community_xhykjyxgs',
   }).unless({
-    path: ['/api/login', '/api/register'],//除了这些地址，其他的URL都需要验证
+    path: ['/api/login', '/api/register'], //除了这些地址，其他的URL都需要验证
   })
 )
 
@@ -57,6 +59,60 @@ app.use(function (err, req, res, next) {
 })
 
 app.use(router)
-app.listen(3000, () => {
+
+var onlineUser = {}
+var onlineCount = 0
+
+io.on('connect', (socket)=>{
+  console.log('a user connected')
+  //监听新用户加入
+  socket.on('login', function (obj) {
+    socket.name = obj.userid
+    //检查用户在线列表
+    if (!onlineUser.hasOwnProperty(obj.userid)) {
+      onlineUser[obj.userid] = obj.user_name
+      obj['type'] = 0;  //用户加入提示类型的消息
+      //在线人数+1
+      onlineCount++
+      //广播消息
+      io.emit('loginSucess', {
+        onlineUser: onlineUser,
+        onlineCount: onlineCount,
+        user: obj,
+      })
+      // console.log(obj.user_name + '加入了聊天室')
+    }
+  })
+
+  //监听用户退出
+  socket.on('disconnect', function () {
+    console.log('user disconnected')
+    //将退出用户在在线列表删除
+    if (onlineUser.hasOwnProperty(socket.name)) {
+      //退出用户信息type=-1
+      var obj = {type:-1, userid: socket.name, user_name: onlineUser[socket.name] }
+      //删除
+      delete onlineUser[socket.name]
+      //在线人数-1
+      onlineCount--
+      //广播消息
+      io.emit('logout', {
+        onlineUser: onlineUser,
+        onlineCount: onlineCount,
+        user: obj,
+      })
+      // console.log(obj.user_name + '退出了聊天室')
+    }
+  })
+
+  //监听用户发布聊天内容
+  socket.on('message', function (obj) {
+    //向所有客户端广播发布的消息
+    io.emit('newMessage', obj)
+    // console.log(obj.user_name + '说：' + obj.message)
+  })
+})
+
+server.listen(3000, () => {
   console.log('running')
 })

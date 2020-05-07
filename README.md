@@ -55,6 +55,7 @@ git push
 - 创建utils文件夹，文件connectDB.js用于连接数据库、token.js用于设置、校验token
 - 安装multer，用于上传文件,`npm install multer -S`
 - `npm i node-xlsx -S` 用于导出excel
+- `npm install socket.io -S` 用于创建聊天室
 
 #### 创建数据库，以及数据表
 
