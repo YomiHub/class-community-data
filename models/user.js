@@ -8,7 +8,7 @@ exports.addUser = (data) => {
   return new Promise((resolve, reject) => {
     let preSql = 'select * from user where phone_num=?'
     db.base(preSql, [data.phone_num], (preResult) => {
-      console.log(preResult)
+      // console.log(preResult)
       if (preResult.length === 0) {
         let sql = 'insert into user set ?'
         db.base(sql, data, (results) => {
@@ -221,7 +221,7 @@ exports.sendApply = (data) => {
 exports.getUserFocus= (user_id) => {
   return new Promise((resolve, reject) => {
     let data = [user_id]
-    let sql = 'select organization.logo_url,organization.name,organization.support_count,organization.id,(select count(*) from focus_relation where focus_relation.class_id=organization.id and focus_relation.power=0) AS focus_count from organization,focus_relation where focus_relation.user_id=? and power=0'
+    let sql = 'select DISTINCT organization.logo_url,organization.name,organization.support_count,organization.id,(select count(*) from focus_relation where focus_relation.class_id=organization.id and focus_relation.power=0) AS focus_count from organization,focus_relation where focus_relation.user_id=? and power=0'
     db.base(sql, data, (results) => {
       resolve({ status: 0, code: 200, data: results })
     })
